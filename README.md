@@ -553,7 +553,7 @@ For taking care of zones/dns
 **cd /var/cache/bind**
 
 **nano db.172.31.enta.pt**
-
+```
 ;
 ; BIND reverse data file for local loopback interface
 ;
@@ -573,10 +573,10 @@ $TTL    604800
 100.0   IN      PTR     pop.enta.pt.
 100.0   IN      PTR     imap.enta.pt.
 100.0   IN      PTR     www.enta.pt.
-
+```
 
 **nano db.192.168.15.enta.pt**
-
+```
 ;
 ; BIND reverse data file for local loopback interface
 ;
@@ -590,9 +590,9 @@ $TTL    604800
 ;
 @       IN      NS      enta.pt.
 174     IN      PTR     enta.pt.
-
+```
 **nano db.192.168.31.enta.pt**
-
+```
 ;
 ; BIND reverse data file for local loopback interface
 ;
@@ -606,9 +606,9 @@ $TTL    604800
 ;
 @       IN      NS      enta.pt.
 174     IN      PTR     enta.pt.
-
+```
 **db.192.168.31.enta.pt**
-
+```
 ; BIND reverse data file for local loopback interface
 ;
 $TTL    604800
@@ -621,9 +621,9 @@ $TTL    604800
 ;
 @       IN      NS      enta.pt.
 1       IN      PTR     enta.pt.
-
+```
 **nano db.enta.pt**
-
+```
 $ORIGIN .
 $TTL 604800     ; 1 week
 enta.pt                 IN SOA  enta.pt. root.enta.pt. (
@@ -659,14 +659,15 @@ pop                     A       172.31.0.1
 smtp                    A       172.31.0.1
 www                     CNAME   enta.pt.
 
-
+```
 # LINUX RTR resolvconf
 
 nano /etc/resolv.conf
 
-#Add this line
+Add this line
+```
 search enta.pt
-
+```
 # LINUX RTR CERTIFICATE GENERATION AND SIGNING THROUGH EASYRSA
 
 
@@ -698,18 +699,20 @@ systemctl restart apache2
 systemctl status apache2
 
 In the router:
-
+```
 scp www.enta.pt.crt debian@172.31.0.100:/home
 scp www.enta.pt.key debian@172.31.0.100:/home
 scp /etc/easy-rsa/pki/ca.crt debian@172.31.0.100:/home
+```
 
 Doesn’t particularly matter where you send it, as long as you have permissions to do so. In my case I just send it directly to /home
 
 In the DMZ:
-
+```
 cp /home/www.enta.pt.crt /etc/ssl/certs/
 cp /home/www.enta.pt.key /etc/ssl/private/
 cp /home/ca.crt /etc/ssl/certs/
+```
 
 In the /etc/apache2/sites-available/default-ssl.conf file change the following section to point to the location of your transferred certificate and key.
 ```
@@ -784,23 +787,29 @@ Maildir format in home directory
 Change to: START=yes
 
 **nano /etc/dovecot/conf.d/10-ssl.conf**
-
+```
 ssl = yes
+# These paths will depend on where you put your own certificates and keys, and what you named them
 ssl_cert = </etc/ssl/certs/mailsrv.enta.pt.crt
 ssl_key = </etc/ssl/private/mailsrv.enta.pt.key
-
-
-# This location will naturally depend on where you put your own certificates and keys, and what you named them
+```
 
 **nano /etc/dovecot/conf.d/10-auth.conf**
 
-uncomment and change: disable_plaintext_auth = no
-
+uncomment and change
+```
+disable_plaintext_auth = no
+```
 **nano /etc/dovecot/conf.d/10-mail.conf**
 
-uncomment: mail_location = maildir:~/Maildir
-comment: mail_location = mbox:~/mail:INBOX=/var/mail/%u
-
+uncomment: 
+```
+mail_location = maildir:~/Maildir
+```
+comment: 
+```
+mail_location = mbox:~/mail:INBOX=/var/mail/%u
+```
 **nano /etc/exim4/exim4.conf.template**
 
 Add  these lines:
